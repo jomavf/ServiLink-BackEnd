@@ -5,6 +5,7 @@ const router = express.Router()
 
 router.route('/')
     .get(ServicesController.services)
+    .post(ServicesController.newService)
 
 router.route('/:id')
     .get(ServicesController.serviceById)

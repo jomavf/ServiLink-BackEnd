@@ -50,22 +50,30 @@ class AuthController {
 
             res.status(201).json(dataResponse)
         }).select({ hidden: 0, __v: 0 })
-            .sort({ username: 'asc' })
+            .sort({ date: 'asc' })
 
     }
     userById(req, res, next) {
         const id = req.params.id
-        const data = User.findOne({ _id: id })
-
         const dataResponse = new DataResponse()
-        dataResponse.success = true
-        dataResponse.code = 201
-        dataResponse.message = 'Getting user success'
-        dataResponse.items = data
-        dataResponse.total = data.length
+        User.findOne({ _id: id }, (err, data) => {
+            if (err) {
+                dataResponse.message = 'Error while getting user on the server'
+                console.log(`Error while getting user from the database ${err}`)
+                return res.status(500).json(dataResponse)
+            }
+            if (!data) {
+                dataResponse.message = 'User not found'
+                return res.status(404).json(dataResponse)
+            }
+            dataResponse.code = 201
+            dataResponse.items = data
+            dataResponse.message = 'OK'
+            dataResponse.success = true
+            dataResponse.total = data.length
 
-        return res.status(201).json(dataResponse)
-
+            res.status(201).json(dataResponse)
+        })
     }
 }
 export default new AuthController()
