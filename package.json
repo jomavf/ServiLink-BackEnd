@@ -4,7 +4,8 @@
   "description": "Project ServiLink for Software architecture course",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --require babel-register src/index.js",
+    "dev": "nodemon --require babel-register src/index.js"
   },
   "author": "Jose Veliz",
   "license": "MIT",
