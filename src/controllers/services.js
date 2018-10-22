@@ -45,7 +45,7 @@ class ServicesController {
 
             res.status(201).json(dataResponse)
         }).select({ hidden: 0, __v: 0 })
-            .sort({ date: 'desc' })
+            .sort({ date: 'asc' })
     }
     serviceById(req, res, next) {
         const id = req.params.id
@@ -78,7 +78,8 @@ class ServicesController {
             title: req.body.title,
             description: req.body.description,
             price: req.body.price,
-            urlToImage: req.body.urlToImage
+            urlToImage: req.body.urlToImage,
+            date: Date.now()
         }
         //Use findbyidandupdate if you fields must be necessary entried
         Service.findOneAndUpdate({ _id: id }, newService, (err, data) => {
