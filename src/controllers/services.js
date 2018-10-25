@@ -9,7 +9,8 @@ class ServicesController {
                 title: req.body.title,
                 description: req.body.description,
                 price: req.body.price,
-                urlToImage: req.body.urlToImage
+                urlToImage: req.body.urlToImage,
+                date: Date.now()
             }, (err, data) => {
                 if (err) {
                     dataResponse.code = 400
