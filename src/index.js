@@ -12,13 +12,13 @@ const server = {
         db()
         config(app)
 
-        const port = app.locals.config.PORT || 5000
-        const host = app.locals.config.HOST
+        // const port = app.locals.config.PORT || 5000
+        // const host = app.locals.config.HOST
 
         router(app)
 
         _server = app.listen(process.env.PORT || 5000, () => {
-            console.log(`Server listening on http://${host}:${port}`)
+            console.log(`Server listening on `)
         })
 
         return _server
