@@ -8,8 +8,9 @@ let _server;
 const server = {
     start() {
         const app = express()
-        db()
+
         config(app)
+        db()
 
         const port = app.locals.config.PORT
         const host = app.locals.config.HOST
@@ -19,6 +20,7 @@ const server = {
         _server = app.listen(port, () => {
             console.log(`Server listening on http://${host}:${port}`)
         })
+        
         return _server
 
     },
