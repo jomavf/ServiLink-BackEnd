@@ -85,7 +85,7 @@ class ServicesController {
 
             res.status(201).json(dataResponse)
         }).select({ hidden: 0, __v: 0 })
-            .sort({ date: 'asc' })
+            .sort({ date: 'desc' })
     }
     serviceById(req, res, next) {
         const id = req.params.id
