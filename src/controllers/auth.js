@@ -2,6 +2,7 @@ import { DataResponse } from '../models/data-response'
 import bcrypt from 'bcryptjs'
 import User from '../models/user'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 class AuthController {
     token(req, res, next) {
@@ -10,6 +11,7 @@ class AuthController {
 
         User.create(
             {
+                _id:new mongoose.Types.ObjectId(),
                 username: req.body.username,
                 password: hashedPassword
             }, (err, user) => {
@@ -56,23 +58,27 @@ class AuthController {
     userById(req, res, next) {
         const id = req.params.id
         const dataResponse = new DataResponse()
-        User.findOne({ _id: id }, (err, data) => {
-            if (err) {
-                dataResponse.message = 'Error while getting user on the server'
-                console.log(`Error while getting user from the database ${err}`)
-                return res.status(500).json(dataResponse)
-            }
-            if (!data) {
+        User.findById(id)
+        .select("username password _id")
+        .exec()
+        .then((data)=>{
+            if(data){
+                dataResponse.code = 201
+                dataResponse.items = data
+                dataResponse.message = 'OK'
+                dataResponse.success = true
+                dataResponse.total = data.length
+                res.status(201).json(dataResponse)
+            }else{
+                dataResponse.code = 400
                 dataResponse.message = 'User not found'
                 return res.status(404).json(dataResponse)
             }
-            dataResponse.code = 201
-            dataResponse.items = data
-            dataResponse.message = 'OK'
-            dataResponse.success = true
-            dataResponse.total = data.length
-
-            res.status(201).json(dataResponse)
+        })
+        .catch((err)=>{
+            dataResponse.code = 500
+            dataResponse.message = err.message
+            res.status(500).json(dataResponse)
         })
     }
 }

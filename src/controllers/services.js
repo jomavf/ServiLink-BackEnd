@@ -1,30 +1,55 @@
 import Service from '../models/service'
 import { DataResponse } from '../models/data-response'
+import mongoose from 'mongoose'
+import User from '../models/user'
 
 class ServicesController {
     newService(req, res, next) {
-        const dataResponse = new DataResponse()
-        Service.create(
-            {
+        User.findById(req.body.userId)
+        .then((user)=>{
+            if(!user){
+                return res.status(404).json({
+                    message: 'User not found'
+                })
+            }
+            const service = new Service({
+                _id:new mongoose.Types.ObjectId(),
                 title: req.body.title,
                 description: req.body.description,
                 price: req.body.price,
                 urlToImage: req.body.urlToImage,
-                date: Date.now()
-            }, (err, data) => {
-                if (err) {
-                    dataResponse.code = 400
-                    dataResponse.message = err.message
-                    console.log(`Error while creating service -> ${err}`)
-                    return res.status(500).json(dataResponse)
-                }
-                dataResponse.success = true
-                dataResponse.code = 201
-                dataResponse.message = 'Created successfully'
-                dataResponse.item = data
-                dataResponse.total = 1
-                res.status(201).json(dataResponse)
+                user: req.body.userId,
+                date:Date.now()
             })
+            return service.save()
+        }).then((data)=>{
+            const dataResponse = new DataResponse()
+            dataResponse.success = true
+            dataResponse.code = 201
+            dataResponse.message = 'Created successfully'
+            dataResponse.item = {
+                 _id:data._id,
+                title:data.title,
+                description: data.description,
+                price: data.price,
+                urlToImage: data.urlToImage,
+                date: data.date,
+                user:data.user,
+                request: {
+                    type:'GET',
+                    url:`http://${process.env.HOST}:${process.env.PORT}/service/${data._id}`
+                }
+            }
+            dataResponse.total = 1
+            res.status(201).json(dataResponse)
+        })
+        .catch((err)=>{
+            const dataResponse = new DataResponse()
+            dataResponse.code = 500
+            dataResponse.message = err.message
+            console.log(`Error while creating service -> ${err}`)
+            res.status(500).json(dataResponse)
+        }) 
     }
     services(req, res, next) {
         const dataResponse = new DataResponse()
@@ -39,7 +64,21 @@ class ServicesController {
                 return res.status(404).json(dataResponse)
             }
             dataResponse.code = 201
-            dataResponse.items = data
+            dataResponse.items = data.map(service =>{
+                return {
+                    _id:service._id,
+                    title:service.title,
+                    description: service.description,
+                    price: service.price,
+                    urlToImage: service.urlToImage,
+                    date: service.date,
+                    user:service.user,
+                    request: {
+                        type:'GET',
+                        url:`http://${process.env.HOST}:${process.env.PORT}/service/${service._id}`
+                    }
+                }
+            })
             dataResponse.message = 'OK'
             dataResponse.success = true
             dataResponse.total = data.length
@@ -83,8 +122,13 @@ class ServicesController {
         .exec()
         .then((result)=>{
             dataResponse.code = 200
-            dataResponse.item = result
-            dataResponse.message = 'OK'
+            dataResponse.item = {
+                request: {
+                    type:'GET',
+                    url:`http://${process.env.HOST}:${process.env.PORT}/service/${id}`
+                }
+            }
+            dataResponse.message = 'Service updated'
             dataResponse.success = true
             res.status(200).json(dataResponse)
         })

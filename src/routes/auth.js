@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.route('/')
     .post(authController.token)
-    .get(verifyToken, authController.getUsers)
+    .get(authController.getUsers)
 
 router.route('/:id')
     .get(authController.userById)

@@ -1,13 +1,13 @@
 import mongoose from 'mongoose'
 
 const UserSchema = new mongoose.Schema({
-
+    _id:{type:mongoose.Schema.Types.ObjectId},
     firstname: { type: String, required: false },
     lastname: { type: String, required: false },
     age: { type: Number, required: false },
     mail: { type: String, required: false },
-    username: { type: String, unique: true, strict: true },
-    password: { type: String, strict: true },
+    username: { type: String, unique: true, required: true },
+    password: { type: String, required: true },
     avatar: { type: String, required: false },
     specialist: { type: Boolean, default: false }, // obj specialist
     hidden: { type: Boolean, default: false }
