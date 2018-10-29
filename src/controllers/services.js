@@ -22,7 +22,7 @@ class ServicesController {
                 dataResponse.code = 201
                 dataResponse.message = 'Created successfully'
                 dataResponse.item = data
-                dataResponse.total = data.length
+                dataResponse.total = 1
                 res.status(201).json(dataResponse)
             })
     }
@@ -62,44 +62,56 @@ class ServicesController {
                 dataResponse.message = 'Service not found'
                 return res.status(404).json(dataResponse)
             }
-            dataResponse.code = 201
+            dataResponse.code = 200
             dataResponse.items = data
             dataResponse.message = 'OK'
             dataResponse.success = true
-            dataResponse.total = data.length
+            dataResponse.total = 1
 
             res.status(201).json(dataResponse)
-        })
+        }).select({hidden:0 , __v:0})
     }
     editServiceById(req, res, next) {
         const id = req.params.id
         const dataResponse = new DataResponse()
-
-        const newService = {
-            title: req.body.title,
-            description: req.body.description,
-            price: req.body.price,
-            urlToImage: req.body.urlToImage,
-            date: Date.now()
+        const updateOps = {}
+        for(const ops of req.body){
+            updateOps[ops.propName] = ops.value
         }
-        //Use findbyidandupdate if you fields must be necessary entried
-        Service.findOneAndUpdate({ _id: id }, newService, (err, data) => {
-            if (err) {
-                dataResponse.message = 'Error while getting service on the server'
-                console.log(`Error while getting service from the database ${err}`)
-                return res.status(500).json(dataResponse)
-            }
-            if (!data) {
-                dataResponse.message = 'Could not update service'
-                return res.status(404).json(dataResponse)
-            }
-            dataResponse.code = 201
-            dataResponse.items = newService
+        console.log(updateOps)
+        Service.update({_id:id},{$set:updateOps})
+        .exec()
+        .then((result)=>{
+            dataResponse.code = 200
+            dataResponse.item = result
             dataResponse.message = 'OK'
             dataResponse.success = true
-            dataResponse.total = newService.length
+            res.status(200).json(dataResponse)
+        })
+        .catch((err)=>{
+            dataResponse.code = 500
+            dataResponse.message = err.message
+            res.status(500).json(dataResponse)
+        })
+    }
+    delete(req,res,next){
+        const id = req.params.id
+        const dataResponse = new DataResponse()
 
-            res.status(201).json(dataResponse)
+        Service.remove({_id:id})
+        .exec()
+        .then(result => {
+            dataResponse.code = 200
+            dataResponse.item = result
+            dataResponse.message = 'OK'
+            dataResponse.success = true
+            res.status(200).send(dataResponse)
+        })
+        .catch(err => {
+            console.log(err)
+            dataResponse.code = 500
+            dataResponse.message = err
+            res.status(500).send(dataResponse)
         })
     }
 }

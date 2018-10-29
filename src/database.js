@@ -8,6 +8,6 @@ export default () => {
         // `${SETTINGS.parsed.DB_PROTOCOL}://${SETTINGS.parsed.DB_URL}:${SETTINGS.parsed.DB_PORT}/${SETTINGS.parsed.DB_NAME}`,
         "mongodb+srv://zetagh:zetaghpwd@cluster0-zjrjx.mongodb.net/test?retryWrites=true",
         { useNewUrlParser: true }
-    ).then(() => { console.log('Successful connection to MongoDB') })
-        .catch(err => console.log(`The error is: ${err}`))
+    ).then(() => { console.log('Successful connection to datbase MongoDB') })
+        .catch(err => console.log(`Error while connecting to database: ${err}`))
 }

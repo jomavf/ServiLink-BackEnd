@@ -11,7 +11,6 @@ export default app => {
     app.use(express.json())
 
     app.set('port', process.env.PORT || 5000)
-    // app.set('env', SETTINGS.parsed.ENV)
     app.set('config', SETTINGS.parsed)
     app.locals.env = app.get('env')
     app.locals.config = app.get('config')
