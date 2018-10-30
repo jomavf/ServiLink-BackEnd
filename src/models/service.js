@@ -8,6 +8,7 @@ const ServiceSchema = new mongoose.Schema({
     urlToImage: { type: String, required: false , default:"https://c-lj.gnst.jp/public/img/common/noimage.jpg?20180831050039" },
     date: { type: Date, default: Date.now() },
     user:{type:mongoose.Schema.Types.ObjectId,ref:'User', required:true},
+    username:{type:String,default:"Unnamed"},
     hidden: { type: Boolean, default: false }
 })
 

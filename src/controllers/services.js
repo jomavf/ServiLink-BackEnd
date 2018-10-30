@@ -19,6 +19,7 @@ class ServicesController {
                 price: req.body.price,
                 urlToImage: req.body.urlToImage,
                 user: req.body.userId,
+                username:user.username,
                 date:Date.now()
             })
             return service.save()
@@ -35,6 +36,7 @@ class ServicesController {
                 urlToImage: data.urlToImage,
                 date: data.date,
                 user:data.user,
+                username:data.username,
                 request: {
                     type:'GET',
                     url:`http://${process.env.HOST}:${process.env.PORT}/service/${data._id}`
@@ -73,10 +75,11 @@ class ServicesController {
                     urlToImage: service.urlToImage,
                     date: service.date,
                     user:service.user,
+                    username:service.username,
                     request: {
                         type:'GET',
-                        urlService:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${service._id}`,
-                        urlUser:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/auth/${service.user}`
+                        urlToService:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${service._id}`,
+                        urlToUser:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/auth/${service.user}`
                     }
                 }
             })
@@ -126,7 +129,7 @@ class ServicesController {
             dataResponse.item = {
                 request: {
                     type:'GET',
-                    url:`http://${process.env.HOST}:${process.env.PORT}/service/${id}`
+                    url:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${id}`
                 }
             }
             dataResponse.message = 'Service updated'

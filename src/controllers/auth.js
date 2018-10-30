@@ -59,7 +59,7 @@ class AuthController {
         const id = req.params.id
         const dataResponse = new DataResponse()
         User.findById(id)
-        .select("username password _id")
+        .select("username _id")
         .exec()
         .then((data)=>{
             if(data){
