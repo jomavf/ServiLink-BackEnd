@@ -75,7 +75,8 @@ class ServicesController {
                     user:service.user,
                     request: {
                         type:'GET',
-                        url:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${service._id}`
+                        urlService:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${service._id}`,
+                        urlUser:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/auth/${service.user}`
                     }
                 }
             })
