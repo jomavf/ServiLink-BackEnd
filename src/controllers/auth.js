@@ -3,34 +3,56 @@ import bcrypt from 'bcryptjs'
 import User from '../models/user'
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import Joi from 'joi'
+
+const schema = Joi.object().keys({
+    username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(8).max(30).required(),
+    password: Joi.string().trim().min(10).required()
+})
 
 class AuthController {
     token(req, res, next) {
         const hashedPassword = bcrypt.hashSync(req.body.password, 8)
         const dataResponse = new DataResponse()
 
-        User.create(
-            {
-                _id:new mongoose.Types.ObjectId(),
-                username: req.body.username,
-                password: hashedPassword
-            }, (err, user) => {
-                if (err) {
-                    dataResponse.code = 400
-                    dataResponse.message = err.message
-                    console.log(`Error while creating user -> ${err}`)
-                    return res.status(500).json(dataResponse)
+        const result = Joi.validate(req.body , schema)
+        if(result.error === null){
+            //Make sure username is unique
+            User.findOne({username:req.body.username})
+            .then(user =>{
+                if(user){
+                    const error =  new Error('The username is not available. Please choose another one.')
+                    res.status(409)
+                    next(error)
+                }else{
+                    User.create(
+                        {
+                            _id:new mongoose.Types.ObjectId(),
+                            username: req.body.username,
+                            password: hashedPassword
+                        }, (err, user) => {
+                            if (err) {
+                                dataResponse.code = 400
+                                dataResponse.message = err.message
+                                console.log(`Error while creating user -> ${err}`)
+                                return res.status(500).json(dataResponse)
+                            }
+                            const token = jwt.sign({ id: user.id }, process.env.SECRET, {
+                                expiresIn: 86400 // 24 hours
+                            })
+                            dataResponse.success = true
+                            dataResponse.code = 201
+                            dataResponse.message = 'Created successfully'
+                            dataResponse.item = { token }
+                            res.status(201).json(dataResponse)
+                        }
+                    )
                 }
-                const token = jwt.sign({ id: user.id }, process.env.SECRET, {
-                    expiresIn: 86400 // 24 hours
-                })
-                dataResponse.success = true
-                dataResponse.code = 201
-                dataResponse.message = 'Created successfully'
-                dataResponse.item = { token }
-                res.status(201).json(dataResponse)
-            }
-        )
+            })
+        }else{
+            res.status(406)
+            next(result.error)
+        }
     }
     getUsers(req, res, next) {
         const dataResponse = new DataResponse()
