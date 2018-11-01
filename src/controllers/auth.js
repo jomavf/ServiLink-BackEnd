@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import Joi from 'joi'
 
 const schema = Joi.object().keys({
-    username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(8).max(30).required(),
+    username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(5).max(30).required(),
     password: Joi.string().trim().min(10).required()
 })
 
@@ -38,7 +38,7 @@ class AuthController {
                                 return res.status(500).json(dataResponse)
                             }
                             const token = jwt.sign({ id: user.id }, process.env.SECRET, {
-                                expiresIn: 86400 // 24 hours
+                                expiresIn: '1d' 
                             })
                             dataResponse.success = true
                             dataResponse.code = 201
@@ -50,7 +50,7 @@ class AuthController {
                 }
             })
         }else{
-            res.status(406)
+            res.status(422)
             next(result.error)
         }
     }
@@ -102,6 +102,46 @@ class AuthController {
             dataResponse.message = err.message
             res.status(500).json(dataResponse)
         })
+    }
+
+    unableToLogin(res,next) {
+        res.status(422)
+        const error = new Error('Unable to login')
+        next(error)
+    }
+
+    login(req,res,next){
+        const result = Joi.validate(req.body , schema)
+        if(result.error === null){
+            User.findOne({username:req.body.username})
+            .then((user)=>{
+                if(user){
+                    bcrypt.compare(req.body.password,user.password).then((result)=>{
+                        if(result === true){
+                            
+                            const payload = {
+                                _id:user._id,
+                                username:user.username
+                            }
+                            jwt.sign(payload,process.env.SECRET,{expiresIn:'1d'},(err,token)=>{
+                                if(err){
+                                    unableToLogin(res,next)
+                                }else{
+                                    res.json({token})
+                                }
+                            })
+                        }else{
+                            unableToLogin(res,next)
+                        }
+                    })
+                }else{
+                    unableToLogin(res,next)
+                }
+            })
+        }
+        else{
+            unableToLogin(res,next)
+        }
     }
 }
 export default new AuthController()

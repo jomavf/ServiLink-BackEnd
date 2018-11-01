@@ -11,4 +11,7 @@ router.route('/')
 router.route('/:id')
     .get(authController.userById)
 
+router.route('/login')
+    .post(authController.login)
+
 export default router
