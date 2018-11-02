@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import Joi from 'joi'
 
 const schema = Joi.object().keys({
-    username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(5).max(30).required(),
+    username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(10).max(30).required(),
     password: Joi.string().trim().min(10).required()
 })
 
@@ -125,22 +125,34 @@ class AuthController {
                             }
                             jwt.sign(payload,process.env.SECRET,{expiresIn:'1d'},(err,token)=>{
                                 if(err){
-                                    unableToLogin(res,next)
+                                    res.status(422)
+                                    const error = new Error('Unable to login')
+                                    next(error)
                                 }else{
                                     res.json({token})
                                 }
                             })
                         }else{
-                            unableToLogin(res,next)
+                            res.status(422)
+                            const error = new Error('Unable to login')
+                            next(error)
                         }
                     })
                 }else{
-                    unableToLogin(res,next)
+                    res.status(422)
+                    const error = new Error('Unable to login')
+                    next(error)
                 }
+            }).catch(err=>{
+                res.status(422)
+                const error = new Error('Unable to login')
+                next(error)
             })
         }
         else{
-            unableToLogin(res,next)
+            res.status(422)
+            const error = new Error('Unable to login')
+            next(error)
         }
     }
 }
