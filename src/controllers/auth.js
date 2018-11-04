@@ -37,7 +37,7 @@ class AuthController {
                                 console.log(`Error while creating user -> ${err}`)
                                 return res.status(500).json(dataResponse)
                             }
-                            const token = jwt.sign({ id: user.id }, process.env.SECRET, {
+                            const token = jwt.sign({ _id: user._id, username:user.username }, process.env.SECRET, {
                                 expiresIn: '1d' 
                             })
                             dataResponse.success = true
@@ -102,12 +102,6 @@ class AuthController {
             dataResponse.message = err.message
             res.status(500).json(dataResponse)
         })
-    }
-
-    unableToLogin(res,next) {
-        res.status(422)
-        const error = new Error('Unable to login')
-        next(error)
     }
 
     login(req,res,next){
