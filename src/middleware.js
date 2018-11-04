@@ -17,6 +17,7 @@ export const verifyToken = (req, res, next) => {
             return res.status(500).json(dataResponse)
         }
         req.user = decoded
+        console.log(decoded)
         next()
     })
 }
