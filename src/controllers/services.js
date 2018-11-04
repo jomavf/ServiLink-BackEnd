@@ -5,53 +5,59 @@ import User from '../models/user'
 
 class ServicesController {
     newService(req, res, next) {
-        User.findById(req.body.userId)
-        .then((user)=>{
-            if(!user){
-                return res.status(404).json({
-                    message: 'User not found'
-                })
-            }
-            const service = new Service({
-                _id:new mongoose.Types.ObjectId(),
-                title: req.body.title,
-                description: req.body.description,
-                price: req.body.price,
-                urlToImage: req.body.urlToImage,
-                user: req.body.userId,
-                username:user.username,
-                date:Date.now()
-            })
-            return service.save()
-        }).then((data)=>{
-            const dataResponse = new DataResponse()
-            dataResponse.success = true
-            dataResponse.code = 201
-            dataResponse.message = 'Created successfully'
-            dataResponse.item = {
-                 _id:data._id,
-                title:data.title,
-                description: data.description,
-                price: data.price,
-                urlToImage: data.urlToImage,
-                date: data.date,
-                user:data.user,
-                username:data.username,
-                request: {
-                    type:'GET',
-                    url:`http://${process.env.HOST}:${process.env.PORT}/service/${data._id}`
+        console.log(`El usuario encriptado es: ${req.user._id}`)
+        if(req.user){
+            User.findById(req.user._id)
+            .then((user)=>{
+                if(!user){
+                    return res.status(404).json({
+                        message: 'User not found'
+                    })
                 }
-            }
-            dataResponse.total = 1
-            res.status(201).json(dataResponse)
-        })
-        .catch((err)=>{
-            const dataResponse = new DataResponse()
-            dataResponse.code = 500
-            dataResponse.message = err.message
-            console.log(`Error while creating service -> ${err}`)
-            res.status(500).json(dataResponse)
-        }) 
+                const service = new Service({
+                    _id:new mongoose.Types.ObjectId(),
+                    title: req.body.title,
+                    description: req.body.description,
+                    price: req.body.price,
+                    urlToImage: req.body.urlToImage,
+                    userId: req.user._id,
+                    username:user.username,
+                    date:Date.now()
+                })
+                return service.save()
+            }).then((data)=>{
+                const dataResponse = new DataResponse()
+                dataResponse.success = true
+                dataResponse.code = 201
+                dataResponse.message = 'Created successfully'
+                dataResponse.item = {
+                     _id:data._id,
+                    title:data.title,
+                    description: data.description,
+                    price: data.price,
+                    urlToImage: data.urlToImage,
+                    date: data.date,
+                    user:data.user,
+                    username:data.username,
+                    request: {
+                        type:'GET',
+                        url:`http://${process.env.HOST}:${process.env.PORT}/service/${data._id}`
+                    }
+                }
+                dataResponse.total = 1
+                res.status(201).json(dataResponse)
+            })
+            .catch((err)=>{
+                const dataResponse = new DataResponse()
+                dataResponse.code = 500
+                dataResponse.message = err.message
+                console.log(`Error while creating service -> ${err}`)
+                res.status(500).json(dataResponse)
+            }) 
+        }else{
+            const error = new Error('Must be logged.')
+            next(error)
+        }
     }
     services(req, res, next) {
         const dataResponse = new DataResponse()

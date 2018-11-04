@@ -3,6 +3,8 @@ import { DataResponse } from './models/data-response'
 
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers["authorization"]
+    console.log(authHeader);
+    
     const dataResponse = new DataResponse()
     if (!authHeader) {
         dataResponse.message = 'No token provided'
