@@ -5,9 +5,10 @@ const ServiceSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
+    position: { lat: Number, lng: Number },
     urlToImage: { type: String, required: false , default:"https://c-lj.gnst.jp/public/img/common/noimage.jpg?20180831050039" },
     date: { type: Date, default: Date.now() },
-    userId:{type:mongoose.Schema.Types.ObjectId,ref:'User', required:false},
+    userId:{type:mongoose.Schema.Types.ObjectId,ref:'User', required:true},
     username:{type:String,default:"Unnamed"},
     hidden: { type: Boolean, default: false }
 })

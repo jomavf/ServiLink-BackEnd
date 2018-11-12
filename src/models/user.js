@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     avatar: { type: String, required: false },
-    specialist: { type: Boolean, default: false }, //TODO:should be ROLE attribute
+    role: { type: String, default: 'user' },
     hidden: { type: Boolean, default: false }
 
 }, { strict: false })
