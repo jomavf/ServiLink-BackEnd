@@ -43,13 +43,13 @@ class AuthController {
                             dataResponse.success = true
                             dataResponse.code = 201
                             dataResponse.message = 'Created successfully'
-                            dataResponse.item = { token }
+                            dataResponse.item = { token:token , userId:user._id }
                             res.status(201).json(dataResponse)
                         }
                     )
                 }
             })
-        }else{
+        }else{ 
             res.status(422)
             next(result.error)
         }
