@@ -10,7 +10,7 @@ router.route('/')
 
 router.route('/:id')
     .get(ServicesController.serviceById)
-    .patch(ServicesController.editServiceById)
-    .delete(ServicesController.delete)
+    .patch(verifyToken,ServicesController.editServiceById)
+    .delete(verifyToken,ServicesController.delete)
 
 export default router
