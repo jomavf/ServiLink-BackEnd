@@ -85,6 +85,7 @@ class ServicesController {
                     date: service.date,
                     user:service.user,
                     username:service.username,
+                    urlToUser:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/auth/${service.user}`,
                     request: {
                         type:'GET',
                         urlToService:`http://${process.env.HOST}${process.env.ENV==="dev"?":"+process.env.PORT:''}/service/${service._id}`,
