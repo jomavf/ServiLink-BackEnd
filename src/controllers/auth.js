@@ -165,5 +165,23 @@ class AuthController {
             next(error)
         }
     }
+    getUserByToken(req,res,next){
+        User.findOne({_id:req.user._id})
+        .then((user)=>{
+            const dataResponse = new DataResponse()
+            dataResponse.code = 201
+            dataResponse.items = {_id:user._id}
+            dataResponse.message = 'OK'
+            dataResponse.success = true
+            dataResponse.total = 1
+            res.status(201).json(dataResponse)
+        })
+        .catch(err=>{
+            console.log(err)
+            res.status(422)
+            const error = new Error('Unable to login')
+            next(error)
+        })
+    }
 }
 export default new AuthController()

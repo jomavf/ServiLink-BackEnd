@@ -14,4 +14,7 @@ router.route('/:id')
 router.route('/login')
     .post(authController.login)
 
+router.route('/autologin')
+    .post(verifyToken,authController.getUserByToken)
+
 export default router
