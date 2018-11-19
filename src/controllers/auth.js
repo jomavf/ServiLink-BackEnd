@@ -7,7 +7,13 @@ import Joi from 'joi'
 
 const schema = Joi.object().keys({
     username: Joi.string().regex(/(^[a-zA-Z0-9_]+$)/).min(10).max(30).required(),
-    password: Joi.string().trim().min(10).required()
+    password: Joi.string().trim().min(10).required(),
+    firstname: Joi.string().allow('').optional(),
+    lastname: Joi.string().allow('').optional(),
+    age: Joi.string().allow('').optional(),
+    mail: Joi.string().allow('').optional(),
+    avatar: Joi.string().allow('').optional(),
+    role:Joi.string().allow('').optional()
 })
 
 class AuthController {
@@ -29,7 +35,13 @@ class AuthController {
                         {
                             _id:new mongoose.Types.ObjectId(),
                             username: req.body.username,
-                            password: hashedPassword
+                            password: hashedPassword,
+                            firstname: req.body.firstname,
+                            lastname: req.body.firstname,
+                            age: req.body.age,
+                            mail: req.body.mail,
+                            avatar: req.body.avatar,
+                            role: req.body.role,
                         }, (err, user) => {
                             if (err) {
                                 dataResponse.code = 400
@@ -50,6 +62,7 @@ class AuthController {
                 }
             })
         }else{ 
+            
             res.status(422)
             next(result.error)
         }
@@ -81,7 +94,7 @@ class AuthController {
         const id = req.params.id
         const dataResponse = new DataResponse()
         User.findById(id)
-        .select("username _id")
+        .select({ hidden: 0, __v: 0,password:0})
         .exec()
         .then((data)=>{
             if(data){
