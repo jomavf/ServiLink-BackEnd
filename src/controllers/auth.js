@@ -136,7 +136,10 @@ class AuthController {
                                     const error = new Error('Unable to login')
                                     next(error)
                                 }else{
-                                    res.json({token})
+                                    res.json({
+                                        token:token,
+                                        _id:user._id
+                                    })
                                 }
                             })
                         }else{
