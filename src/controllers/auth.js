@@ -10,10 +10,11 @@ const schema = Joi.object().keys({
     password: Joi.string().trim().min(10).required(),
     firstname: Joi.string().allow('').optional(),
     lastname: Joi.string().allow('').optional(),
-    age: Joi.string().allow('').optional(),
+    age: Joi.number().allow('').optional(),
     mail: Joi.string().allow('').optional(),
     avatar: Joi.string().allow('').optional(),
-    role:Joi.string().allow('').optional()
+    role:Joi.string().allow('').optional(),
+    registeredServices:Joi.array().allow('').optional()
 })
 
 class AuthController {
@@ -39,6 +40,7 @@ class AuthController {
                             firstname: req.body.firstname,
                             lastname: req.body.firstname,
                             age: req.body.age,
+                            registeredServices: req.body.registeredServices,
                             mail: req.body.mail,
                             avatar: req.body.avatar,
                             role: req.body.role,
