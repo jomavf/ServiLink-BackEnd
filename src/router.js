@@ -1,9 +1,11 @@
 import service from './routes/services'
 import auth from './routes/auth'
+import category from './routes/category'
 
 export default app => {
     app.use('/auth', auth)
     app.use('/service', service)
+    app.use('/category', category)
 
     app.use((req,res,next)=>{
         const error = new Error('Not found')

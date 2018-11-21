@@ -40,6 +40,7 @@ class AuthController {
                             firstname: req.body.firstname,
                             lastname: req.body.firstname,
                             age: req.body.age,
+                            telephone: req.body.telephone,
                             registeredServices: req.body.registeredServices,
                             mail: req.body.mail,
                             avatar: req.body.avatar,

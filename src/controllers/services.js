@@ -2,17 +2,32 @@ import Service from '../models/service'
 import { DataResponse } from '../models/data-response'
 import mongoose from 'mongoose'
 import User from '../models/user'
+import Category from '../models/category'
 
 class ServicesController {
     newService(req, res, next) {
-        console.log(`El usuario encriptado es: ${req.user._id}`)
-        if(req.user){
+        const dataResponse = new DataResponse()
+        var pUser = null
+        if (req.user) {
             User.findById(req.user._id)
             .then((user)=>{
-                if(!user){
+                console.log("Primer then")
+                if (!user) {
                     return res.status(404).json({
                         message: 'User not found'
                     })
+                }
+                pUser = user
+                return Category.findOne({ name: req.body.categoryName })
+            })
+            .then((mCategory)=>{
+                console.log(mCategory)
+                console.log("Segundo then")
+                console.log(`user -> ${pUser}`)
+                
+                if (!mCategory) {
+                    dataResponse.message = 'Category not found'
+                    return res.status(404).json(dataResponse)
                 }
                 const service = new Service({
                     _id:new mongoose.Types.ObjectId(),
@@ -21,12 +36,17 @@ class ServicesController {
                     price: req.body.price,
                     position: req.body.position,
                     urlToImage: req.body.urlToImage,
-                    userId: req.user._id,
-                    username:user.username,
+                    userId: pUser._id,
+                    categoryId: mCategory._id,
+                    categoryName:mCategory.name,
+                    username:pUser.username,
                     date:Date.now()
                 })
+                console.log("intermediario")
                 return service.save()
-            }).then((data)=>{
+            })
+            .then((data)=>{
+                console.log("Tercer then")
                 const dataResponse = new DataResponse()
                 dataResponse.success = true
                 dataResponse.code = 201
@@ -41,6 +61,8 @@ class ServicesController {
                     date: data.date,
                     user:data.user,
                     username:data.username,
+                    categoryId:data.categoryId,
+                    categoryName:data.categoryName,
                     request: {
                         type:'GET',
                         url:`http://${process.env.HOST}:${process.env.PORT}/service/${data._id}`
@@ -50,6 +72,7 @@ class ServicesController {
                 res.status(201).json(dataResponse)
             })
             .catch((err)=>{
+                console.log("Catch then")
                 const dataResponse = new DataResponse()
                 dataResponse.code = 500
                 dataResponse.message = err.message
