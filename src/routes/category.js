@@ -5,7 +5,7 @@ import {verifyToken} from '../middleware'
 const router = express.Router()
 
 router.route('/')
-    .get(verifyToken,CategoryController.listCategory)
+    .get(CategoryController.listCategory)
     .post(verifyToken,CategoryController.createCategory)
 
 router.route('/:id')
