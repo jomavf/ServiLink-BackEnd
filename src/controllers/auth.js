@@ -144,7 +144,7 @@ class AuthController {
                                         _id:user._id
                                     })
                                 }
-                            })
+                            }) 
                         }else{
                             res.status(422)
                             const error = new Error('Unable to login')
