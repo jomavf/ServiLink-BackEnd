@@ -39,6 +39,7 @@ class CategoryController {
                 _id:new mongoose.Types.ObjectId(),
                 name: req.body.name,
                 description: req.body.description,
+                urlToImage: req.body.urlToImage,
             })
             return category.save()
         }).then((data)=>{
